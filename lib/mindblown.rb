@@ -1,28 +1,22 @@
+require 'active_record'
+
 module Mindblown
-  def self.included(base)
-    base.extend ClassMethods
-  end
+  class Algorithm
+    # Euclid's Algorithm
+    # Inputs: x and y are positive integers
+    # Outputs: the greatest common divisor of x and y
+    def euclids(x, y)
+      if x < y
+        x, y = y, x
+      end
 
-  def ensure_unique(name)
-    begin
-      self[name] = yield
-    end while self.class.exists?(name => self[name])
-  end
 
-  module ClassMethods
-
-    def mindblown(*args, &block)
-      options = { :length => 8, :chars => ('a'..'z').to_a + ('A'..'Z').to_a + ('0'..'9').to_a }
-      options.merge!(args.pop) if args.last.kind_of? Hash
-      args.each do |name|
-        before_create do |record|
-          if block
-            record.ensure_unique(name, &block)
-          else
-            record.ensure_unique(name) do
-              Array.new(options[:length]) { options[:chars].to_a[rand(options[:chars].to_a.size)] }.join
-            end
-          end
+      loop do
+        r = x % y
+        if r == 0
+          return y
+        else
+          x, y = y, r
         end
       end
     end
